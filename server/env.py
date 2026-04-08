@@ -179,13 +179,13 @@ class FieldTechEnv:
                     break
             
             if is_correct:
-                return 1.0, True, f"Correct! {self.task_config['explanation']}"
+                return 0.99, True, f"Correct! {self.task_config['explanation']}"
             
             # Partial credit for mentioning correct category but wrong specific
             if "cable" in response_lower:
                 return 0.3, False, "You identified it as a cable, but selected the wrong type"
             
-            return 0.0, False, f"Incorrect. {self.task_config['explanation']}"
+            return 0.01, False, f"Incorrect. {self.task_config['explanation']}"
         
         # Medium tasks: Port selection
         elif task_id.startswith("port_select"):
@@ -193,7 +193,7 @@ class FieldTechEnv:
             
             # Check if any correct variation is in response
             if any(variation in response_lower for variation in correct_variations):
-                return 1.0, True, f"Correct! {self.task_config['explanation']}"
+                return 0.99, True, f"Correct! {self.task_config['explanation']}"
             
             # Partial credit for mentioning port but wrong number
             if "port" in response_lower or any(char.isdigit() for char in response_lower):
@@ -206,7 +206,7 @@ class FieldTechEnv:
                         return 0.5, False, "You're close, but that's not the correct port"
                 return 0.2, False, "You mentioned a port number, but it's not correct"
             
-            return 0.0, False, f"Incorrect. {self.task_config['explanation']}"
+            return 0.01, False, f"Incorrect. {self.task_config['explanation']}"
         
         # Hard tasks: Wiring diagnosis
         elif task_id.startswith("wiring_diag"):
@@ -219,7 +219,8 @@ class FieldTechEnv:
                     errors_found.append(error)
             
             # Score based on how many errors identified
-            score = len(errors_found) / len(errors)
+            raw_score = len(errors_found) / len(errors)
+            score = max(0.01, min(0.99, raw_score))
             
             if score >= 0.75:  # Found 3+ out of 4 errors
                 return score, True, f"Excellent diagnosis! You found {len(errors_found)}/{len(errors)} errors. {self.task_config['explanation']}"
@@ -228,9 +229,12 @@ class FieldTechEnv:
             elif score > 0:  # Found at least 1 error
                 return score, False, f"You identified some issues ({len(errors_found)}/{len(errors)}), but missed several critical errors."
             else:
-                return 0.0, False, f"Incorrect. {self.task_config['explanation']}"
+                return 0.01, False, f"Incorrect. {self.task_config['explanation']}"
         
-        return 0.0, False, "Unable to evaluate response"
+        return 0.01, False, "Unable to evaluate response"
+    
+        score = max(0.01, min(0.99, score))
+        return score, is_correct, feedback
     
     def step(self, action: FieldTechAction) -> Dict[str, Any]:
         """Execute one step in the environment.
