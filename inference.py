@@ -120,7 +120,7 @@ def run_inference(env_url: str = "http://localhost:7860"):
         reset = requests.post(f"{env_url}/reset", json={"task_id": FIELD_TECH_TASK}, timeout=30)
 
         if reset.status_code != 200:
-            print("[END] success=false steps=0 score=0.000 rewards=")
+            print("[END] success=false steps=0 score=0.01 rewards=")
             return
 
         data = reset.json()
@@ -145,6 +145,11 @@ def run_inference(env_url: str = "http://localhost:7860"):
 
             observation = step_data["observation"]
             reward = step_data["reward"]["score"]
+            if reward <= 0:
+                reward = 0.01
+            elif reward >= 1:
+                reward = 0.99
+                
             done = step_data["done"]
 
             rewards.append(reward)
@@ -154,7 +159,12 @@ def run_inference(env_url: str = "http://localhost:7860"):
 
             history.append(f"{action} -> {reward:.2f}")
 
-        final_score = rewards[-1] if rewards else 0.0
+        final_score = rewards[-1] if rewards else 0.01
+        if final_score <= 0:
+            final_score = 0.01
+        elif final_score >= 1:
+            final_score = 0.99
+            
         success = final_score >= 0.75
 
         print(f"[END] success={str(success).lower()} steps={step} score={final_score:.3f} rewards={','.join(map(str,rewards))}")
@@ -162,7 +172,7 @@ def run_inference(env_url: str = "http://localhost:7860"):
 
     except Exception as e:
         print(f"[ERROR] {e}", file=sys.stderr)
-        print(f"[END] success=false steps=0 score=0.000 rewards=")
+        print(f"[END] success=false steps=0 score=0.01 rewards=")
 
 # ============================================================================
 # ENTRY POINT
