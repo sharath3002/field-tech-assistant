@@ -51,8 +51,8 @@ class FieldTechReward(BaseModel):
     """
     score: float = Field(
         ...,
-        ge=0.0,
-        le=1.0,
+        gt=0.0,
+        lt=1.0,
         description="Normalized score between 0.0 (wrong) and 1.0 (perfect)"
     )
     feedback: str = Field(
