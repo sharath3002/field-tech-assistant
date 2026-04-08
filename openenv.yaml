@@ -1,0 +1,65 @@
+name: field_tech_assistant
+version: 1.0.0
+description: AI-powered visual assistance for field technicians - cable identification, port selection, and wiring diagnostics
+
+# Environment metadata
+environment:
+  type: openenv
+  framework: custom
+  interface: fastapi
+  
+# Task information  
+tasks:
+  - id: cable_id_basic
+    name: Cable Identification - Basic
+    difficulty: easy
+    description: Identify correct network cable from visual description
+    grader: grade_cable_identification
+
+  - id: cable_id_power
+    name: Cable Identification - Power
+    difficulty: easy
+    description: Identify correct power cable for PDU
+    grader: grade_cable_identification
+
+  - id: port_select_basic
+    name: Port Selection - Management
+    difficulty: medium
+    description: Select correct management port on network switch
+    grader: grade_port_selection
+
+  - id: port_select_uplink
+    name: Port Selection - Uplink
+    difficulty: medium
+    description: Select correct uplink port for high-speed connection
+    grader: grade_port_selection
+
+  - id: wiring_diag_server
+    name: Wiring Diagnosis - Server Rack
+    difficulty: hard
+    description: Diagnose multiple wiring errors in server rack setup
+    grader: grade_wiring_diagnosis
+
+  - id: wiring_diag_patch
+    name: Wiring Diagnosis - Patch Panel
+    difficulty: hard
+    description: Diagnose wiring errors in patch panel configuration
+    grader: grade_wiring_diagnosis
+
+# Runtime configuration
+runtime:
+  max_steps: 3
+  timeout: 300
+  
+# API endpoints
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  health: GET /health
+
+# Environment variables (no secrets!)
+env_vars:
+  API_BASE_URL: https://router.huggingface.co/v1
+  MODEL_NAME: Qwen/Qwen2.5-72B-Instruct
+  FIELD_TECH_TASK: cable_id_basic
