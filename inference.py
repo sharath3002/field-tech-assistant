@@ -184,4 +184,12 @@ if __name__ == "__main__":
         print("[WARN] Missing API_KEY or API_BASE_URL", file=sys.stderr)
 
     env_url = os.getenv("ENV_URL", "http://localhost:7860")
-    run_inference(env_url)
+    tasks = [
+    "cable_id_basic",
+    "cable_id_power",
+    "port_select_basic"
+    ]
+
+    for task in tasks:
+        os.environ["FIELD_TECH_TASK"] = task
+        run_inference(env_url)
