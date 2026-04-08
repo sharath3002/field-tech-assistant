@@ -233,8 +233,7 @@ class FieldTechEnv:
         
         return 0.01, False, "Unable to evaluate response"
     
-        score = max(0.01, min(0.99, score))
-        return score, is_correct, feedback
+        
     
     def step(self, action: FieldTechAction) -> Dict[str, Any]:
         """Execute one step in the environment.
