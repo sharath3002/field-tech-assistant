@@ -1,0 +1,20 @@
+[project]
+name = "field-tech-assistant"
+version = "1.0.0"
+description = "OpenEnv environment for AI-powered field technician assistance"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic>=2.0.0",
+    "requests",
+    "openenv-core>=0.2.0"
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
